@@ -18,7 +18,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 class Mote
-  VERSION = "1.1.4"
+  VERSION = "1.1.5"
 
   PATTERN = /^[^\S\n]*(%)[^\S\n]*(.*?)(?:\n|\Z)|(<\?)\s+(.*?)\s+\?>|(\{\{)(.*?)\}\}/m
 
@@ -50,9 +50,15 @@ class Mote
   end
 
   module Helpers
-    def mote(file, params = {}, context = self)
-      mote_cache[file] ||= Mote.parse(File.read(file), context, params.keys)
-      mote_cache[file][params]
+    def mote(file, params = {}, context = self, cache = false)
+      if cache
+        mote_cache[file] ||= Mote.parse(File.read(file), context, params.keys)
+        mote_cache[file][params]
+      else
+        mote_cache[file] = Mote.parse(File.read(file), context, params.keys)
+        mote_cache[file][params]
+      end
+
     end
 
     def mote_cache
